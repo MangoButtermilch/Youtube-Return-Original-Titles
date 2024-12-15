@@ -1,11 +1,16 @@
 function clearLocalStorageData() {
     const cachePrefix = "return-org-titles";
-
+    const deleteKeys = [];
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (!key.startsWith(cachePrefix)) continue;
-        localStorage.removeItem(key);
+        deleteKeys.push(key);
     }
+
+    for (let i = 0; i < deleteKeys.length; i++) {
+        localStorage.removeItem(deleteKeys[i]);
+    }
+
     return 1;
 }
 
@@ -39,13 +44,15 @@ function executeScript(script, resultHandler) {
     });
 }
 
-executeScript(getLocalStorageSize, (result) => {
+const updateStorageDisplay = (result) => {
     const cacheDisplay = document.querySelector("[data-cache-display]");
-    const kb = result[0].result / 1000;
+    const kb = (result[0].result + 1) / 1000;
     cacheDisplay.innerText = kb.toLocaleString("en-GB").concat(" kb");
-});
+};
+executeScript(getLocalStorageSize, updateStorageDisplay);
 
 const clearCacheBtn = document.getElementById("clear-cache");
 clearCacheBtn.addEventListener("click", () => {
     executeScript(clearLocalStorageData, (result) => { });
+    executeScript(getLocalStorageSize, updateStorageDisplay);
 });
