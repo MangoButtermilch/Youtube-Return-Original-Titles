@@ -168,7 +168,7 @@ var ReturnYoutubeOriginalTitles = (function () {
                     const originalTitle = await getYouTubeTitle(videoId);
                     addToCache(videoId, originalTitle);
 
-                    console.warn(videoTitleElement.innerText + " => " + originalTitle);
+                    //console.warn(videoTitleElement.innerText + " => " + originalTitle);
 
                     videoTitleElement.innerText = originalTitle;
                     window.clearInterval(mainTitleInterval);
@@ -220,7 +220,6 @@ var ReturnYoutubeOriginalTitles = (function () {
         run();
 
         window.addEventListener(pathChangedEvent, () => {
-            console.warn("PATH CHANGED")
             clearAllIntervals();
             run();
         });
