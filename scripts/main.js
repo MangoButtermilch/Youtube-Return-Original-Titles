@@ -105,12 +105,14 @@ var ReturnYoutubeOriginalTitles = (function () {
         const intervals = [];
         run = async () => {
 
-            const isStartPage = window.location.pathname === "/";
-            const isOnTrendsPage = window.location.pathname === "/feed/trending";
-            const isSubscriptionPage = window.location.pathname === "/feed/subscriptions";
-            const isHistoryPage = window.location.pathname === "/feed/history";
             const isWatchingDefaultVideo = window.location.pathname === "/watch";
             const isWatchingShortsVideo = window.location.pathname.includes("/shorts/");
+            const isWatchingVideo = isWatchingDefaultVideo || isWatchingShortsVideo;
+
+            const isStartPage = !isWatchingVideo && window.location.pathname === "/";
+            const isOnTrendsPage = !isWatchingVideo && window.location.pathname === "/feed/trending";
+            const isSubscriptionPage = !isWatchingVideo && window.location.pathname === "/feed/subscriptions";
+            const isHistoryPage = !isWatchingVideo && window.location.pathname === "/feed/history";
 
             if (isHistoryPage) {
                 //history
