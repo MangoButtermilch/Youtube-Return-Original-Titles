@@ -1,6 +1,6 @@
 ![alt text](logo.png)
 
-# Youtube Return Original Titles
+# Chrome extension: Youtube Return Original Titles
  
 ## Replaces translated Youtube video titles with their original version.
 
