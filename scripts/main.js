@@ -19,11 +19,11 @@ var ReturnYoutubeOriginalTitles = (function () {
      * Example: recognizes switch from /shorts to /feed/trends, ...
      */
     function observePathChanges() {
-        let path = window.location.pathname;
+        let path = window.location.pathname.concat(window.location.search);
         let oldPath = path;
 
         setInterval(() => {
-            path = window.location.pathname;
+            path = window.location.pathname.concat(window.location.search);
 
             if (path !== oldPath) {
                 oldPath = path;
@@ -57,6 +57,7 @@ var ReturnYoutubeOriginalTitles = (function () {
 
         const interval = setInterval(async () => {
             const videos = document.querySelectorAll(videoSelector);
+            if (!videos || videos.length === 0) return;
 
             for (let video of videos) {
                 const anchor = video.querySelector("a");
@@ -82,7 +83,7 @@ var ReturnYoutubeOriginalTitles = (function () {
                 const videoTitle = await getYouTubeTitle(videoId);
                 addToCache(videoId, videoTitle);
 
-                //console.warn(titleElement.innerText + " => " + videoTitle);
+                //                console.warn(titleElement.innerText + " => " + videoTitle);
                 titleElement.innerText = videoTitle;
             }
 
@@ -105,14 +106,14 @@ var ReturnYoutubeOriginalTitles = (function () {
         const intervals = [];
         run = async () => {
 
+            const isStartPage = window.location.pathname === "/";
+            const isOnTrendsPage = window.location.pathname === "/feed/trending";
+            const isSubscriptionPage = window.location.pathname === "/feed/subscriptions";
+            const isHistoryPage = window.location.pathname === "/feed/history";
+            const isChannelPage = window.location.pathname.includes("@");
+            const isSearchResultPage = window.location.pathname === "/results";
             const isWatchingDefaultVideo = window.location.pathname === "/watch";
             const isWatchingShortsVideo = window.location.pathname.includes("/shorts/");
-            const isWatchingVideo = isWatchingDefaultVideo || isWatchingShortsVideo;
-
-            const isStartPage = !isWatchingVideo && window.location.pathname === "/";
-            const isOnTrendsPage = !isWatchingVideo && window.location.pathname === "/feed/trending";
-            const isSubscriptionPage = !isWatchingVideo && window.location.pathname === "/feed/subscriptions";
-            const isHistoryPage = !isWatchingVideo && window.location.pathname === "/feed/history";
 
             if (isHistoryPage) {
                 //history
@@ -134,18 +135,42 @@ var ReturnYoutubeOriginalTitles = (function () {
                 intervals.push(createUpdateMultiViewTitlesInterval("ytd-rich-item-renderer", "#video-title-link yt-formatted-string"));
             }
 
+            if (isChannelPage) {
+                //channel start page
+                intervals.push(createUpdateMultiViewTitlesInterval("ytd-grid-video-renderer", "#video-title"));
+                //channel video page
+                intervals.push(createUpdateMultiViewTitlesInterval("ytd-rich-grid-media", "#video-title"));
+
+            }
+
+            if (isSearchResultPage) {
+                intervals.push(createUpdateMultiViewTitlesInterval("ytd-video-renderer", "a yt-formatted-string"));
+            }
+
             if (isWatchingDefaultVideo) {
-                const videoId = window.location.pathname.concat(window.location.search);
-                const cacheItem = getFromCache(videoId);
 
-                const hasCache = cacheItem !== null;
-                const originalTitle = hasCache ? cacheItem : (await getYouTubeTitle(videoId));
-
-                const mainTitleInterval = setInterval(() => {
-                    const videoTitleElement = document.querySelector("#title > h1 > yt-formatted-string");
+                const mainTitleInterval = setInterval(async () => {
+                    const videoTitleElement = document.querySelector("ytd-watch-metadata #title > h1 > yt-formatted-string");
                     if (!videoTitleElement) return;
+                    videoTitleElement.removeAttribute("is-empty"); //can happen if title was changed to fast
 
-                    videoTitleElement.innerHTML = originalTitle;
+                    const videoId = window.location.pathname.concat(window.location.search);
+                    const cacheItem = getFromCache(videoId);
+
+                    if (cacheItem !== null) {
+                        videoTitleElement.innerText = cacheItem;
+                        return;
+                    }
+
+                    if (runningRequests.has(videoId)) return;
+                    runningRequests.add(videoId);
+
+                    const originalTitle = await getYouTubeTitle(videoId);
+                    addToCache(videoId, originalTitle);
+
+                    console.warn(videoTitleElement.innerText + " => " + originalTitle);
+
+                    videoTitleElement.innerText = originalTitle;
                     window.clearInterval(mainTitleInterval);
                 }, defaultIntervalMs);
 
@@ -195,6 +220,7 @@ var ReturnYoutubeOriginalTitles = (function () {
         run();
 
         window.addEventListener(pathChangedEvent, () => {
+            console.warn("PATH CHANGED")
             clearAllIntervals();
             run();
         });
