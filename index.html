@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Clear Cache</title>
+  <style>
+    :root {
+      --fontLarge: 16px;
+      --fontSmall: 14px;
+      --backgroundColor: #333;
+      --textColor: #bbb;
+      --buttonColor: #dc143c;
+      --buttonColorHover: #f03c60;
+    }
+
+    h1 {
+      font-size: var(--fontLarge);
+    }
+
+    h2 {
+      font-size: var(--fontSmall);
+    }
+
+    body {
+      min-width: 250px;
+      border: none;
+      border-radius: 5px;
+      background-color: var(--backgroundColor);
+      color: var(--textColor);
+    } 
+
+    button {
+      font-size: var(--fontSmall);
+      padding: 10px;
+      background-color: var(--buttonColor);
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: var(--buttonColorHover);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Return Youtube original titles</h1>
+  <hr />
+
+  <h2>Title cache: <span data-cache-display></span> <button id="clear-cache">Clear Cache</button></h2>
+
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
