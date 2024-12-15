@@ -48,6 +48,11 @@ For Updates do the same.
 If you want to fix something or add new features, feel free to make a PR.
 
 
+### What's next
+
+- Video descriptions
+- ...
+
 ### Example
 
 Channel from Anton Pretrov: https://www.youtube.com/@whatdamath
