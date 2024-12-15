@@ -1,0 +1,25 @@
+{
+  "name": "Return Youtube original titles",
+  "description": "Replaces translated Youtube video titles with their original version.",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "logo.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["scripting", "activeTab", "storage"],
+  "content_scripts": [
+    {
+      "js": [
+        "scripts/main.js"
+      ],
+      "matches": [
+        "*://www.youtube.com/*",
+        "*://youtube.com/*"
+      ]
+    }
+  ]
+}
