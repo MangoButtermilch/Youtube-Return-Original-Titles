@@ -134,7 +134,10 @@ var ReturnYoutubeOriginalTitles = (function () {
 
             if (isWatchingDefaultVideo) {
                 const videoId = window.location.pathname.concat(window.location.search);
-                const originalTitle = await getYouTubeTitle(videoId);
+                const cacheItem = getFromCache(videoId);
+
+                const hasCache = cacheItem !== null;
+                const originalTitle = hasCache ? cacheItem : (await getYouTubeTitle(videoId));
 
                 const mainTitleInterval = setInterval(() => {
                     const videoTitleElement = document.querySelector("#title > h1 > yt-formatted-string");
@@ -155,8 +158,6 @@ var ReturnYoutubeOriginalTitles = (function () {
 
             if (isWatchingShortsVideo) {
 
-                const processedShorts = new Map();
-                const runningRequests = new Set();
 
                 const shortsTitleInterval = setInterval(async () => {
                     const shortsTitleElement = document.querySelector("#shorts-container [is-active] .ytShortsVideoTitleViewModelShortsVideoTitle > span");
@@ -164,23 +165,22 @@ var ReturnYoutubeOriginalTitles = (function () {
 
                     const activeShortId = window.location.pathname; // contains /shorts/hp6234...
 
-                    if (processedShorts.has(activeShortId)) {
-                        shortsTitleElement.innerText = processedShorts.get(activeShortId);
+                    const cacheItem = getFromCache(activeShortId);
+                    if (cacheItem !== null) {
+                        shortsTitleElement.innerText = cacheItem;
                         return;
                     }
 
                     if (runningRequests.has(activeShortId)) return;
                     runningRequests.add(activeShortId);
 
-                    const shortTitle = await getYouTubeTitle({ id: activeShortId, isShorts: true });
+                    const shortTitle = await getYouTubeTitle(activeShortId);
+                    addToCache(activeShortId, shortTitle);
 
-                    processedShorts.set(activeShortId, shortTitle);
                     shortsTitleElement.innerText = shortTitle;
                 }, defaultIntervalMs);
 
-
                 intervals.push(shortsTitleInterval);
-
             }
         }
 
