@@ -14,22 +14,27 @@ The extension updates Youtube video titles for:
 - Youtube trends
 - history
 - subscription feed
+- channels
+- search results
 
 All titles will be cached inside the `localStorage`.
 If you click the extension icon, you can see a small panel.
 It displays the current amount of storage used in `kb.
 The cache can be cleared with a button.
 
+
 ### Installation
 
 1. Download extension latest release
 2. Move folder to any place
-3. Delete `README.md` and `LICENSE` 
+3. Delete `README.md` and `LICENSE` and `/example` folder
 4. Goto [chrome://extensions/](chrome://extensions/)
 5. Enable developer mode
 6. Click `load unpacked` and choose downloaded folder
 7. You can now turn off developer mode
 8. Done
+
+For Updates do the same.
 
 ### How it works:
 
@@ -41,3 +46,16 @@ The cache can be cleared with a button.
 ### Contributions
 
 If you want to fix something or add new features, feel free to make a PR.
+
+
+### Example
+
+Channel from Anton Pretrov: https://www.youtube.com/@whatdamath
+
+#### Without extension:
+
+![alt text](/example/german.png)
+
+#### With extension:
+
+![alt text](/example/original.png)
