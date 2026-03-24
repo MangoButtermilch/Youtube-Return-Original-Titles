@@ -65,14 +65,14 @@ var ReturnYoutubeOriginalTitles = (function () {
 
                 const videoId = anchor.getAttribute("href");
                 const titleElement = video.querySelector(titleSelector);
+
                 if (!titleElement) {
                     continue;
                 }
 
                 const cachedTitle = getFromCache(videoId);
-                if (cachedTitle !== null) {
+                if (cachedTitle !== null && cachedTitle.length !== 0) {
                     titleElement.removeAttribute("is-empty");//can happen for trends
-
                     titleElement.innerText = cachedTitle;
                     continue;
                 }
@@ -117,7 +117,7 @@ var ReturnYoutubeOriginalTitles = (function () {
 
             if (isHistoryPage) {
                 //history
-                intervals.push(createUpdateMultiViewTitlesInterval("ytd-video-renderer", "a yt-formatted-string"));
+                intervals.push(createUpdateMultiViewTitlesInterval("yt-lockup-view-model", "a.yt-lockup-metadata-view-model__title span"));
             }
 
             if (isOnTrendsPage) {
@@ -127,12 +127,12 @@ var ReturnYoutubeOriginalTitles = (function () {
 
             if (isSubscriptionPage) {
                 //subscriptions
-                intervals.push(createUpdateMultiViewTitlesInterval("ytd-rich-item-renderer", "#video-title-link yt-formatted-string"));
+                intervals.push(createUpdateMultiViewTitlesInterval("ytd-rich-item-renderer", "a.yt-lockup-metadata-view-model__title span"));
             }
 
             if (isStartPage) {
                 //recommend videos on for you page
-                intervals.push(createUpdateMultiViewTitlesInterval("ytd-rich-item-renderer", "#video-title-link yt-formatted-string"));
+                intervals.push(createUpdateMultiViewTitlesInterval("ytd-rich-item-renderer", "a.yt-lockup-metadata-view-model__title span"));
             }
 
             if (isChannelPage) {
@@ -177,7 +177,7 @@ var ReturnYoutubeOriginalTitles = (function () {
                 intervals.push(mainTitleInterval);
 
                 //sidebar videos
-                intervals.push(createUpdateMultiViewTitlesInterval("ytd-compact-video-renderer", "h3 > span#video-title"));
+                intervals.push(createUpdateMultiViewTitlesInterval("yt-lockup-view-model", "a.yt-lockup-metadata-view-model__title span"));
 
                 //playlists
                 intervals.push(createUpdateMultiViewTitlesInterval("ytd-playlist-panel-video-renderer", "h4 > span#video-title"));
@@ -187,7 +187,7 @@ var ReturnYoutubeOriginalTitles = (function () {
 
 
                 const shortsTitleInterval = setInterval(async () => {
-                    const shortsTitleElement = document.querySelector("#shorts-container [is-active] .ytShortsVideoTitleViewModelShortsVideoTitle > span");
+                    const shortsTitleElement = document.querySelector("yt-shorts-video-title-view-model h2 span");
                     if (!shortsTitleElement) return;
 
                     const activeShortId = window.location.pathname; // contains /shorts/hp6234...
